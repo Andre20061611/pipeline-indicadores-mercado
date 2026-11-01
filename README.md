@@ -52,6 +52,7 @@ Este projeto é direcionado para investidores que preferem investir no CDI diár
 
 ### 6. Dólar PTAX venda: série 1, apenas dias úteis
 
+
 - **O que decidi:** Usei a série 1 do SGS, que traz o dólar PTAX de venda, em base diária, e mantive somente os dias úteis, sem preencher fins de semana e feriados.
 
 
@@ -59,13 +60,19 @@ Este projeto é direcionado para investidores que preferem investir no CDI diár
 
 ### **7. Ibovespa: Yahoo Finance, fechamento diário**
 
+
 - **O que decidi:** Usei o Yahoo Finance, pela biblioteca yfinance, com o ticker ^BVSP, e guardei o fechamento diário do Ibovespa em pontos, mantendo somente os dias em que a bolsa abriu, sem preencher fins de semana e feriados.
 
 
 - **Por quê:** O Ibovespa não vem do Banco Central, porque ele é calculado e divulgado pela B3, a bolsa brasileira, e não faz parte da base de séries do Banco Central. O Yahoo apenas republica esses dados, mas entrega o histórico de forma prática pela biblioteca. Como ele não é uma fonte oficial, conferi o último fechamento, de 30/10/2026, no Google Finance: o site relatou 167.921,80 às 16:56 e o meu arquivo consta 167.922, diferença apenas de arredondamento."
 
+### **8. Junção das séries diárias: manter todas as datas**
 
 
+-  **O que decidi:** Juntei CDI, dólar e Ibovespa numa base única pela data, mantendo todas as datas de todas as séries e deixando vazio onde uma série não tem valor. O IPCA ficou numa tabela separada.
+
+
+- **Por quê:** Cada série tem o seu próprio calendário. Na junção vi dois casos. O Ibovespa ficou com 8 vazios, nas vésperas de Natal e Ano Novo, dias em que o Banco Central publica o dólar mas a bolsa está fechada. E o CDI ficou com 1 vazio em 30/10/2026, porque conferi na API do Banco Central e o dado desse dia ainda não tinha sido publicado. Tirar essas datas faria eu perder informação real, e preencher criaria valores que não existiram, então deixei vazio. O IPCA é mensal, e juntá-lo à base diária deixaria quase todas as linhas dele vazias, então ele ficou em tabela separada.
 
 ## Limitações
 
