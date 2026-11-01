@@ -5,7 +5,7 @@ from pathlib import Path
 PASTA_SRC = Path(__file__).resolve().parent
 
 etapas = [
-    "transformar_cdi.py",
+    "extrair_cdi.py",
     "extrair_dolar.py",
     "extrair_ibovespa.py",
     "extrair_ipca.py",
