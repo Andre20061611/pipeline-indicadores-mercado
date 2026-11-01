@@ -1,4 +1,5 @@
 import requests
+import os
 import pandas as pd
 
 URL = "https://api.bcb.gov.br/dados/serie/bcdata.sgs.12/dados"
@@ -18,3 +19,5 @@ df["valor"] = df["valor"].astype(float)
 
 print(df.dtypes)
 print(df.head())
+os.makedirs("data", exist_ok=True)
+df.to_csv("data/cdi.csv", index=False)
