@@ -50,6 +50,13 @@ Este projeto é direcionado para investidores que preferem investir no CDI diár
 - **Por quê:** Na minha pesquisa inicial apareceu o IPCA-15, que é só uma prévia de como a inflação do mês deve fechar. Escolhi o IPCA cheio porque é o número oficial fechado do mês, o que define se um investimento rendeu acima da inflação. Conferi a série comparando setembro de 2026 com o site do IBGE, e o valor de 0,82 bateu. Mantive o dado mensal porque o IPCA é divulgado uma vez por mês, e transformá-lo em diário significaria inventar valores que o IBGE nunca divulgou.
 
 
+### 6. Dólar PTAX venda: série 1, apenas dias úteis
+
+- **O que decidi:** Usei a série 1 do SGS, que traz o dólar PTAX de venda, em base diária, e mantive somente os dias úteis, sem preencher fins de semana e feriados.
+
+
+- **Por quê:** Conferi o código na API do Banco Central e o valor mais recente, de R$ 5,42, bateu com a cotação que aparece no site do próprio Banco Central. A PTAX é a taxa de referência do dia, calculada como a média das consultas feitas aos bancos, e não a última cotação do mercado, então ela só existe quando há negociação. Por isso mantive a mesma decisão do CDI: preencher os dias sem dado criaria cotações que não existiram.
+
 ## Limitações
 
 Este projeto ainda está no começo. Até agora, só o CDI foi extraído da API do Banco Central e tratado. Primeiro converti a data e o valor para os tipos corretos. O código mostra o resultado na tela, o CDI tratado é salvo em data/cdi.csv, mas as outras séries ainda não foram feitas e ainda não organizei uma base única para o dashboard.
