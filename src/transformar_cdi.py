@@ -33,6 +33,9 @@ params = {
     "dataFinal": hoje.strftime("%d/%m/%Y"),
 }
 resposta = requests.get(URL, params=params)
+if resposta.status_code == 404:
+    print("Nenhum dado novo publicado pelo Banco Central.")
+    raise SystemExit
 resposta.raise_for_status()
 dados = resposta.json()
 
