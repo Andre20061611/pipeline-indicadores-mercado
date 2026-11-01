@@ -74,6 +74,15 @@ Este projeto é direcionado para investidores que preferem investir no CDI diár
 
 - **Por quê:** Cada série tem o seu próprio calendário. Na junção vi dois casos. O Ibovespa ficou com 8 vazios, nas vésperas de Natal e Ano Novo, dias em que o Banco Central publica o dólar mas a bolsa está fechada. E o CDI ficou com 1 vazio em 30/10/2026, porque conferi na API do Banco Central e o dado desse dia ainda não tinha sido publicado. Tirar essas datas faria eu perder informação real, e preencher criaria valores que não existiram, então deixei vazio. O IPCA é mensal, e juntá-lo à base diária deixaria quase todas as linhas dele vazias, então ele ficou em tabela separada.
 
+
+### **9. Atualização incremental do CDI**
+
+-  **O que decidi:** Fiz o script do CDI pedir ao Banco Central só as datas depois da última que já está no arquivo, sem repetir datas existentes. Se o arquivo não existe ou está vazio, ele faz a carga completa. Se a fonte não tem dado novo, o script avisa e termina, sem erro.
+
+
+-  **Por quê:** Ao juntar as séries vi que o CDI de 30/10/2026 não existia na fonte, o que mostrou que o dado chega com atraso, então o pipeline precisa conseguir se atualizar depois. Como a data identifica cada linha, o script nunca grava a mesma data duas vezes, e rodar várias vezes não estraga o arquivo. Na primeira versão o script quebrou, porque o Banco Central responde com erro 404 quando não há dado no período. Passei a tratar só o 404 como "sem dado novo" e deixei os outros erros, como queda de internet, quebrarem o script, para não confundir um problema real com a falta de dado novo.
+
+
 ## Limitações
 
 
