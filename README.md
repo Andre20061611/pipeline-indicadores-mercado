@@ -57,10 +57,27 @@ Este projeto é direcionado para investidores que preferem investir no CDI diár
 
 - **Por quê:** Conferi o código na API do Banco Central e o valor mais recente, de R$ 5,42, bateu com a cotação que aparece no site do próprio Banco Central. A PTAX é a taxa de referência do dia, calculada como a média das consultas feitas aos bancos, e não a última cotação do mercado, então ela só existe quando há negociação. Por isso mantive a mesma decisão do CDI: preencher os dias sem dado criaria cotações que não existiram.
 
+### **7. Ibovespa: Yahoo Finance, fechamento diário**
+
+- **O que decidi:** Usei o Yahoo Finance, pela biblioteca yfinance, com o ticker ^BVSP, e guardei o fechamento diário do Ibovespa em pontos, mantendo somente os dias em que a bolsa abriu, sem preencher fins de semana e feriados.
+
+
+- **Por quê:** O Ibovespa não vem do Banco Central, porque ele é calculado e divulgado pela B3, a bolsa brasileira, e não faz parte da base de séries do Banco Central. O Yahoo apenas republica esses dados, mas entrega o histórico de forma prática pela biblioteca. Como ele não é uma fonte oficial, conferi o último fechamento, de 30/10/2026, no Google Finance: o site relatou 167.921,80 às 16:56 e o meu arquivo consta 167.922, diferença apenas de arredondamento."
+
+
+
+
 ## Limitações
 
-Este projeto ainda está no começo. Até agora, só o CDI foi extraído da API do Banco Central e tratado. Primeiro converti a data e o valor para os tipos corretos. O código mostra o resultado na tela, o CDI tratado é salvo em data/cdi.csv, mas as outras séries ainda não foram feitas e ainda não organizei uma base única para o dashboard.
 
-Ainda não fiz o IPCA, o dólar PTAX e o Ibovespa, nem o dashboard. Minha ideia é seguir esta ordem, priemeiro pegar todos os dados, tratar tudo organizado no Python para não deixar nenhuma limitação, e só depois montar o dashboard para mostrar ao usuário. Também ainda não fiz a atualização incremental, que é um bônus do case.
+Já extraí as quatro séries, CDI, IPCA, dólar PTAX e Ibovespa, e cada uma está salva em um arquivo CSV separado na pasta data. Datas e valores já foram convertidos para os tipos corretos, e mantive só os dias úteis em cada série.
 
-Tive algumas dificuldades pelo caminho, não sabia onde encontrar as taxas do CDI, precisei pesquisar como configurar o formato da data no Python e pedi ajuda à IA para entender como executar o código. Como estou em um dos período iniciaisd do curso, sigo aprendendo no processo e conferindo o que a IA me sugere, de acordo com meus estudos realizados.
+Ainda não juntei as séries numa base única pela data, e ainda não montei o dashboard. Minha ideia é seguir essa ordem: primeiro juntar e tratar tudo no Python, para não deixar nenhuma limitação, e só depois montar o dashboard para mostrar ao usuário.
+
+O Ibovespa vem do Yahoo Finance, pela biblioteca yfinance, que é não oficial. Ela não tem a garantia de uma fonte como o Banco Central e pode mudar, falhar ou ter um dia faltando sem aviso. Por isso conferi o último fechamento em outras duas fontes.
+
+O Ibovespa tem 1248 registros e o dólar tem 1256, uma diferença de 8 que ainda não investiguei. Pretendo descobrir a causa quando juntar as séries pela data.
+
+Pretendo fazer a atualização incremental, que é um bônus do case, mas ainda não comecei.
+
+Tive algumas dificuldades pelo caminho, não sabia onde encontrar as taxas do CDI, precisei pesquisar como configurar o formato da data no Python e pedi ajuda à IA para entender como executar o código. No código do Ibovespa, o mais difícil foi lidar com o fuso horário das datas, que o Yahoo entrega e as outras séries não têm, e organizar a lógica do código inteiro. Como estou em um dos períodos iniciais do curso, sigo aprendendo no processo e conferindo o que a IA me sugere, de acordo com meus estudos.
