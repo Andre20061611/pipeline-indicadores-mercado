@@ -41,6 +41,15 @@ Este projeto é direcionado para investidores que preferem investir no CDI diár
 
 - **Por quê:** O CDI só rende em dias úteis, então não existe taxa para sábado, domingo ou feriado. Preencher esses dias com algum valor seria inventar um dado que não existe e poderia distorcer o cálculo do rendimento acumulado. Na prática, não precisei aplicar nenhum filtro: a API do Banco Central só publica a taxa nos dias úteis, então a série já chega no formato que eu queria, e o meu papel foi não alterar isso.
 
+### 5. IPCA: série 433, mantido mensal
+
+
+- **O que decidi:** Usei a série 433 do SGS, o IPCA cheio mensal, e mantive uma linha por mês, sem transformar em dado diário.
+
+
+- **Por quê:** Na minha pesquisa inicial apareceu o IPCA-15, que é só uma prévia de como a inflação do mês deve fechar. Escolhi o IPCA cheio porque é o número oficial fechado do mês, o que define se um investimento rendeu acima da inflação. Conferi a série comparando setembro de 2026 com o site do IBGE, e o valor de 0,82 bateu. Mantive o dado mensal porque o IPCA é divulgado uma vez por mês, e transformá-lo em diário significaria inventar valores que o IBGE nunca divulgou.
+
+
 ## Limitações
 
 Este projeto ainda está no começo. Até agora, só o CDI foi extraído da API do Banco Central e tratado. Primeiro converti a data e o valor para os tipos corretos. O código mostra o resultado na tela, o CDI tratado é salvo em data/cdi.csv, mas as outras séries ainda não foram feitas e ainda não organizei uma base única para o dashboard.
