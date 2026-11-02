@@ -1,14 +1,16 @@
 # Pipeline de Indicadores de Mercado
 
-Este projeto é direcionado para investidores que preferem investir no CDI diário. 
+Este projeto reúne quatro indicadores do mercado financeiro brasileiro dos últimos cinco anos (CDI, IPCA, dólar PTAX e Ibovespa), trata os dados e os organiza em uma base. O dashboard é voltado para a equipe comercial da Vêneto e mostra quanto R$ 1.000 investidos em novembro de 2021 valeriam hoje no CDI, no dólar e na inflação (IPCA), com o Ibovespa à parte, como referência de renda variável. O dashboard mostra o que já aconteceu e não faz previsões.
 
-## Como executar
+
+## Como abrir o dashboard
 
 1. Instalar Python e Git.
 2. Clone o repositório com `git clone https://github.com/Andre20061611/pipeline-indicadores-mercado.git`
 3. Entre na pasta do projeto com `cd pipeline-indicadores-mercado`
 4. Instale as dependências com `py -m pip install -r requirements.txt`
 5. Rode o pipeline completo com `py src/atualizar_tudo.py`
+6. Depois de rodar o pipeline, abra o dashboard com `py -m streamlit run src/dashboard.py`.
 
 - ####  Esse comando atualiza as quatro séries (CDI, dólar, Ibovespa e IPCA) e depois junta CDI, dólar e Ibovespa em `data/base_diaria.csv`. O IPCA fica em `data/ipca.csv`, em tabela separada.
 
@@ -112,7 +114,6 @@ diferença apenas de arredondamento."
 ### 13. Dashboard: Ibovespa em gráfico separado, em pontos
 
 - **O que decidi:** Opetei por deixar o gráfico do Ibovespa separado dos outros investimentos 
-
 
 
 - **Por quê:** O Ibovespa não é um investimento, é um índice que mede o desempenho médio das ações mais negociadas da B3. Ele vem em pontos e não em reais, então colocá-lo no mesmo gráfico dos outros seria comparar coisas diferentes. Além disso, a renda variável depende de oferta e demanda, o que traz um risco diferente do CDI. Deixei separado para apresentar ao investidor uma referência nova, sem misturar com as outras três.
