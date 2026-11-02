@@ -111,7 +111,20 @@ diferença apenas de arredondamento."
 
 ### 13. Dashboard: Ibovespa em gráfico separado, em pontos
 
+- **O que decidi:** Opetei por deixar o gráfico do Ibovespa separado dos outros investimentos 
+
+
+
 - **Por quê:** O Ibovespa não é um investimento, é um índice que mede o desempenho médio das ações mais negociadas da B3. Ele vem em pontos e não em reais, então colocá-lo no mesmo gráfico dos outros seria comparar coisas diferentes. Além disso, a renda variável depende de oferta e demanda, o que traz um risco diferente do CDI. Deixei separado para apresentar ao investidor uma referência nova, sem misturar com as outras três.
+
+
+### 14. Dashboard: encerrar as três séries em 30/09/2026
+
+
+- **O que decidi:** Encerrar CDI, dólar e IPCA na mesma data, 30 de setembro de 2026, tanto no gráfico principal quanto nos valores finais.
+
+
+**Por quê:** Eu queria uma comparação justa entre as três referências. Quando olhei o dashboard, cada série terminava em uma data diferente: o CDI em 29/10, o dólar em 30/10 e o IPCA em 30/09. Como o IPCA é mensal e o último mês fechado é setembro, usei essa como data comum, o último dia em que as três têm dado. Assim ninguém compara um mês de inflação a mais de um mês de CDI e dólar. O custo é perder outubro no gráfico, que ainda não tem IPCA.
 
 
 ## Limitações
