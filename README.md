@@ -8,8 +8,9 @@ Este projeto é direcionado para investidores que preferem investir no CDI diár
 2. Clone o repositório com `git clone https://github.com/Andre20061611/pipeline-indicadores-mercado.git`
 3. Entre na pasta do projeto com `cd pipeline-indicadores-mercado`
 4. Instale as dependências com `py -m pip install -r requirements.txt`
-5. Rode a extração com `py src/extrair_cdi.py`
-6. Rode a transformação com `py src/transformar_cdi.py`
+5. Rode o pipeline completo com `py src/atualizar_tudo.py`
+
+- ####  Esse comando atualiza as quatro séries (CDI, dólar, Ibovespa e IPCA) e depois junta CDI, dólar e Ibovespa em `data/base_diaria.csv`. O IPCA fica em `data/ipca.csv`, em tabela separada.
 
 ## Decisões
 ### 1. Começar pelo CDI
@@ -58,15 +59,16 @@ Este projeto é direcionado para investidores que preferem investir no CDI diár
 
 - **Por quê:** Conferi o código na API do Banco Central e o valor mais recente, de R$ 5,42, bateu com a cotação que aparece no site do próprio Banco Central. A PTAX é a taxa de referência do dia, calculada como a média das consultas feitas aos bancos, e não a última cotação do mercado, então ela só existe quando há negociação. Por isso mantive a mesma decisão do CDI: preencher os dias sem dado criaria cotações que não existiram.
 
-### **7. Ibovespa: Yahoo Finance, fechamento diário**
+### 7. Ibovespa: Yahoo Finance, fechamento diário
 
 
 - **O que decidi:** Usei o Yahoo Finance, pela biblioteca yfinance, com o ticker ^BVSP, e guardei o fechamento diário do Ibovespa em pontos, mantendo somente os dias em que a bolsa abriu, sem preencher fins de semana e feriados.
 
 
-- **Por quê:** O Ibovespa não vem do Banco Central, porque ele é calculado e divulgado pela B3, a bolsa brasileira, e não faz parte da base de séries do Banco Central. O Yahoo apenas republica esses dados, mas entrega o histórico de forma prática pela biblioteca. Como ele não é uma fonte oficial, conferi o último fechamento, de 30/10/2026, no Google Finance: o site relatou 167.921,80 às 16:56 e o meu arquivo consta 167.922, diferença apenas de arredondamento."
+- **Por quê:** O Ibovespa não vem do Banco Central, porque ele é calculado e divulgado pela B3, a bolsa brasileira, e não faz parte da base de séries do Banco Central. O Yahoo apenas republica esses dados, mas entrega o histórico de forma prática pela biblioteca. Como ele não é uma fonte oficial, conferi o último fechamento, de 30/10/2026, no Google Finance: o site relatou 167.921,80 às 16:56 e na B3, que mostrou 167.920,+
+diferença apenas de arredondamento."
 
-### **8. Junção das séries diárias: manter todas as datas**
+### 8. Junção das séries diárias: manter todas as datas
 
 
 -  **O que decidi:** Juntei CDI, dólar e Ibovespa numa base única pela data, mantendo todas as datas de todas as séries e deixando vazio onde uma série não tem valor. O IPCA ficou numa tabela separada.
@@ -75,7 +77,7 @@ Este projeto é direcionado para investidores que preferem investir no CDI diár
 - **Por quê:** Cada série tem o seu próprio calendário. Na junção vi dois casos. O Ibovespa ficou com 8 vazios, nas vésperas de Natal e Ano Novo, dias em que o Banco Central publica o dólar mas a bolsa está fechada. E o CDI ficou com 1 vazio em 30/10/2026, porque conferi na API do Banco Central e o dado desse dia ainda não tinha sido publicado. Tirar essas datas faria eu perder informação real, e preencher criaria valores que não existiram, então deixei vazio. O IPCA é mensal, e juntá-lo à base diária deixaria quase todas as linhas dele vazias, então ele ficou em tabela separada.
 
 
-### **9. Atualização incremental do CDI**
+### 9. Atualização incremental do CDI
 
 -  **O que decidi:** Fiz o script do CDI pedir ao Banco Central só as datas depois da última que já está no arquivo, sem repetir datas existentes. Se o arquivo não existe ou está vazio, ele faz a carga completa. Se a fonte não tem dado novo, o script avisa e termina, sem erro.
 
@@ -83,17 +85,34 @@ Este projeto é direcionado para investidores que preferem investir no CDI diár
 -  **Por quê:** Ao juntar as séries vi que o CDI de 30/10/2026 não existia na fonte, o que mostrou que o dado chega com atraso, então o pipeline precisa conseguir se atualizar depois. Como a data identifica cada linha, o script nunca grava a mesma data duas vezes, e rodar várias vezes não estraga o arquivo. Na primeira versão o script quebrou, porque o Banco Central responde com erro 404 quando não há dado no período. Passei a tratar só o 404 como "sem dado novo" e deixei os outros erros, como queda de internet, quebrarem o script, para não confundir um problema real com a falta de dado novo.
 
 
+### 10. Atualização incremental do dólar, do Ibovespa e do IPCA
+
+-  **O que decidi:** Levei a atualização incremental do CDI para as outras três séries. Cada script lê a última data do próprio arquivo, pede à fonte só o que veio depois e não grava a mesma data duas vezes. Se o arquivo não existe, faz a carga completa.
+
+
+- **Por quê:** Cada série tem o seu ritmo de publicação, então o pipeline precisa se atualizar sozinho. No Ibovespa, a primeira versão mostrou “1 registro novo” quando não havia nenhum, porque o Yahoo devolveu de novo a linha da última data. Passei a filtrar só as datas depois da última do arquivo, e o drop_duplicates serviu de segunda proteção. No IPCA, que é mensal, o próximo período é o mês seguinte e não o dia seguinte. Isso apareceu na prática: numa rodada do IPCA a API do Banco Central deu erro 502, o script parou, e na segunda tentativa funcionou. Foi o caso que eu tinha previsto na decisão anterior: um erro do servidor é um problema real, e não falta de dado novo.
+
+
+### 11. Parar o pipeline quando uma etapa falha
+
+- **O que decidi:** Criei o atualizar_tudo.py, que roda as quatro extrações e depois a junção, em ordem. Se qualquer etapa falha, o pipeline avisa qual foi e para na hora.
+
+
+- **Por quê:** Prefiro interromper o programa por completo a deixar ele prosseguir com algum dado faltando. Se uma série falhasse e as outras seguissem, a base ficaria com informações cortadas, sem ninguém perceber, e isso poderia prejudicar os outros dados. Parar também deixa claro onde está o problema: o programa mostra qual etapa está rodando, qual falhou e, no fim, “Pipeline concluído com sucesso” quando tudo deu certo. Isso funcionou na prática: quando renomeei o script do CDI e esqueci de atualizar a lista, o pipeline apontou a etapa com erro e parou.
+
+
 ## Limitações
 
 
-Já extraí as quatro séries, CDI, IPCA, dólar PTAX e Ibovespa, e cada uma está salva em um arquivo CSV separado na pasta data. Datas e valores já foram convertidos para os tipos corretos, e mantive só os dias úteis em cada série.
+Já extraí as quatro séries, CDI, IPCA, dólar PTAX e Ibovespa, e cada uma se atualiza sozinha com py src/atualizar_tudo.py. As séries diárias foram juntas numa base única pela data, e o IPCA ficou em tabela separada por ser mensal. Ainda não montei o dashboard.
 
-Ainda não juntei as séries numa base única pela data, e ainda não montei o dashboard. Minha ideia é seguir essa ordem: primeiro juntar e tratar tudo no Python, para não deixar nenhuma limitação, e só depois montar o dashboard para mostrar ao usuário.
+O Ibovespa vem do Yahoo Finance, pela biblioteca yfinance, que é não oficial. Ela não tem a garantia de uma fonte como o Banco Central e pode mudar, falhar ou ter um dia faltando sem aviso. A biblioteca também imprime avisos de depreciação do pandas, que não afetam o resultado, mas mostram que ela pode quebrar com versões futuras. Por isso conferi o último fechamento em outras duas fontes.
 
-O Ibovespa vem do Yahoo Finance, pela biblioteca yfinance, que é não oficial. Ela não tem a garantia de uma fonte como o Banco Central e pode mudar, falhar ou ter um dia faltando sem aviso. Por isso conferi o último fechamento em outras duas fontes.
+A base diária tem vazios que são reais: o Ibovespa tem 8, nas vésperas de Natal e Ano Novo, quando a bolsa fecha e o Banco Central publica o dólar. O CDI tem 1 vazio em 30/10/2026, porque o Banco Central ainda não tinha publicado esse dia na data da extração. Deixei os vazios em vez de preencher, para não inventar valores.
 
-O Ibovespa tem 1248 registros e o dólar tem 1256, uma diferença de 8 que ainda não investiguei. Pretendo descobrir a causa quando juntar as séries pela data.
-
-Pretendo fazer a atualização incremental, que é um bônus do case, mas ainda não comecei.
+Se a API do Banco Central falhar, o pipeline para com erro, e a solução é rodar de novo depois.
 
 Tive algumas dificuldades pelo caminho, não sabia onde encontrar as taxas do CDI, precisei pesquisar como configurar o formato da data no Python e pedi ajuda à IA para entender como executar o código. No código do Ibovespa, o mais difícil foi lidar com o fuso horário das datas, que o Yahoo entrega e as outras séries não têm, e organizar a lógica do código inteiro. Como estou em um dos períodos iniciais do curso, sigo aprendendo no processo e conferindo o que a IA me sugere, de acordo com meus estudos.
+
+Tive algumas dificuldades pelo caminho, não sabia onde encontrar as taxas do CDI, precisei pesquisar como configurar o formato da data no Python e pedi ajuda à IA para entender como executar o código. No código do Ibovespa, o mais difícil foi lidar com o fuso horário das datas, que o Yahoo entrega e as outras séries não têm, e organizar a lógica do código inteiro. Como estou em um dos períodos iniciais do curso, sigo aprendendo no processo e conferindo o que a IA me sugere, de acordo com meus estudos.
+
