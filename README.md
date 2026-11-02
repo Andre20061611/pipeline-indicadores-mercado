@@ -25,7 +25,7 @@ Este projeto é direcionado para investidores que preferem investir no CDI diár
 - **O que decidi:** Busquei os dados direto na fonte oficial, o Banco Central do Brasil, usando a série 12 do SGS (taxa diária do CDI), e conferi se os valores faziam sentido antes de seguir.
 
 
-- **Por quê:** O case avisa que a IA pode errar ou trazer dados antigos, então não quis depender de números que ela me desse. O site do SGS deu erro no meu navegador, e por isso abri a série 12 pelo link da API do Banco Central, que a IA me passou. Lá vi o histórico dos últimos cinco anos, com valores diários perto de 0,05 (% ao dia). Para saber se era mesmo o CDI, calculei o rendimento anual. Na primeira conta somei a taxa diária 252 vezes e deu 12,80%, que não batia com a Selic de 13,75%. Revisando, entendi que o CDI rende por juros compostos, e o certo é compor os dias: (1 + taxa/100) elevado a 252. Refeita a conta, deu cerca de [13,65%] ao ano, um pouco abaixo da Selic, como se espera do CDI. Conferir o código também importa, porque existem versões diárias, anualizadas e acumuladas com números diferentes, e usar a errada traria outra unidade sem nenhum aviso.
+- **Por quê:** O case avisa que a IA pode errar ou trazer dados antigos, então não quis depender de números que ela me desse. O site do SGS deu erro no meu navegador, e por isso abri a série 12 pelo link da API do Banco Central, que a IA me passou. Lá vi o histórico dos últimos cinco anos, com valores diários perto de 0,05 (% ao dia). Para saber se era mesmo o CDI, calculei o rendimento anual. Na primeira conta somei a taxa diária 252 vezes e deu 12,80%, que não batia com a Selic de 13,75%. Revisando, entendi que o CDI rende por juros compostos, e o certo é compor os dias: (1 + taxa/100) elevado a 252. Refeita a conta, deu cerca de 13,65% ao ano, um pouco abaixo da Selic, como se espera do CDI. Conferir o código também importa, porque existem versões diárias, anualizadas e acumuladas com números diferentes, e usar a errada traria outra unidade sem nenhum aviso.
 
 ### 3. Converter datas e valores
 
@@ -99,6 +99,19 @@ diferença apenas de arredondamento."
 
 
 - **Por quê:** Prefiro interromper o programa por completo a deixar ele prosseguir com algum dado faltando. Se uma série falhasse e as outras seguissem, a base ficaria com informações cortadas, sem ninguém perceber, e isso poderia prejudicar os outros dados. Parar também deixa claro onde está o problema: o programa mostra qual etapa está rodando, qual falhou e, no fim, “Pipeline concluído com sucesso” quando tudo deu certo. Isso funcionou na prática: quando renomeei o script do CDI e esqueci de atualizar a lista, o pipeline apontou a etapa com erro e parou.
+
+
+### 12. Dashboard: comparar CDI, IPCA e dólar a partir de R$ 1.000
+
+- **O que decidi:** mostrar CDI, IPCA e dólar no mesmo gráfico, na mesma unidade: quanto R$ 1.000 investidos em novembro de 2021 valeriam hoje em cada referência.
+
+
+- **Por quê:** O dashboard mostra o que já aconteceu, para o investidor entender o que cada área rendeu nos últimos cinco anos. As três séries originais vêm em unidades diferentes (taxa diária, variação mensal e cotação), e só ficam comparáveis quando todas viram o valor de R$ 1.000 ao longo do tempo. O gráfico mostra o passado e não prevê o futuro. O IPCA entra como régua da inflação: quando o CDI fica acima dele, o investimento teve ganho real.
+
+
+### 13. Dashboard: Ibovespa em gráfico separado, em pontos
+
+- **Por quê:** O Ibovespa não é um investimento, é um índice que mede o desempenho médio das ações mais negociadas da B3. Ele vem em pontos e não em reais, então colocá-lo no mesmo gráfico dos outros seria comparar coisas diferentes. Além disso, a renda variável depende de oferta e demanda, o que traz um risco diferente do CDI. Deixei separado para apresentar ao investidor uma referência nova, sem misturar com as outras três.
 
 
 ## Limitações
