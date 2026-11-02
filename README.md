@@ -3,16 +3,26 @@
 Este projeto reúne quatro indicadores do mercado financeiro brasileiro dos últimos cinco anos (CDI, IPCA, dólar PTAX e Ibovespa), trata os dados e os organiza em uma base. O dashboard é voltado para a equipe comercial da Vêneto e mostra quanto R$ 1.000 investidos em novembro de 2021 valeriam hoje no CDI, no dólar e na inflação (IPCA), com o Ibovespa à parte, como referência de renda variável. O dashboard mostra o que já aconteceu e não faz previsões.
 
 
-## Como abrir o dashboard
+## Como executar o dashboard
 
 1. Instalar Python e Git.
+
+
 2. Clone o repositório com `git clone https://github.com/Andre20061611/pipeline-indicadores-mercado.git`
+
+
 3. Entre na pasta do projeto com `cd pipeline-indicadores-mercado`
+
+
 4. Instale as dependências com `py -m pip install -r requirements.txt`
+
+
 5. Rode o pipeline completo com `py src/atualizar_tudo.py`
+- ####  Esse comando atualiza as quatro séries (CDI, dólar, Ibovespa e IPCA) e depois junta CDI, dólar e Ibovespa em `data/base_diaria.csv`. O IPCA fica em `data/ipca.csv`, em tabela separada.
+
+
 6. Depois de rodar o pipeline, abra o dashboard com `py -m streamlit run src/dashboard.py`.
 
-- ####  Esse comando atualiza as quatro séries (CDI, dólar, Ibovespa e IPCA) e depois junta CDI, dólar e Ibovespa em `data/base_diaria.csv`. O IPCA fica em `data/ipca.csv`, em tabela separada.
 
 ## Decisões
 ### 1. Começar pelo CDI
@@ -27,7 +37,7 @@ Este projeto reúne quatro indicadores do mercado financeiro brasileiro dos últ
 - **O que decidi:** Busquei os dados direto na fonte oficial, o Banco Central do Brasil, usando a série 12 do SGS (taxa diária do CDI), e conferi se os valores faziam sentido antes de seguir.
 
 
-- **Por quê:** O case avisa que a IA pode errar ou trazer dados antigos, então não quis depender de números que ela me desse. O site do SGS deu erro no meu navegador, e por isso abri a série 12 pelo link da API do Banco Central, que a IA me passou. Lá vi o histórico dos últimos cinco anos, com valores diários perto de 0,05 (% ao dia). Para saber se era mesmo o CDI, calculei o rendimento anual. Na primeira conta somei a taxa diária 252 vezes e deu 12,80%, que não batia com a Selic de 13,75%. Revisando, entendi que o CDI rende por juros compostos, e o certo é compor os dias: (1 + taxa/100) elevado a 252. Refeita a conta, deu cerca de 13,65% ao ano, um pouco abaixo da Selic, como se espera do CDI. Conferir o código também importa, porque existem versões diárias, anualizadas e acumuladas com números diferentes, e usar a errada traria outra unidade sem nenhum aviso.
+- **Por quê:** O case avisa que a IA pode errar ou trazer dados antigos, então não quis depender de números que ela me desse. O site do SGS deu erro no meu navegador, e por isso abri a série 12 pelo link da API do Banco Central, que a IA me passou. Lá vi os últimos registros, com valores diários perto de 0,05 (% ao dia). Para saber se era mesmo o CDI, calculei o rendimento anual. Na primeira conta somei a taxa diária 252 vezes e deu 12,80%, que não batia com a Selic de 13,75%. Revisando, entendi que o CDI rende por juros compostos, e o certo é compor os dias: (1 + taxa/100) elevado a 252. Refeita a conta, deu cerca de 13,65% ao ano, um pouco abaixo da Selic, como se espera do CDI. Conferir o código também importa, porque existem versões diárias, anualizadas e acumuladas com números diferentes, e usar a errada traria outra unidade sem nenhum aviso.
 
 ### 3. Converter datas e valores
 
@@ -67,8 +77,7 @@ Este projeto reúne quatro indicadores do mercado financeiro brasileiro dos últ
 - **O que decidi:** Usei o Yahoo Finance, pela biblioteca yfinance, com o ticker ^BVSP, e guardei o fechamento diário do Ibovespa em pontos, mantendo somente os dias em que a bolsa abriu, sem preencher fins de semana e feriados.
 
 
-- **Por quê:** O Ibovespa não vem do Banco Central, porque ele é calculado e divulgado pela B3, a bolsa brasileira, e não faz parte da base de séries do Banco Central. O Yahoo apenas republica esses dados, mas entrega o histórico de forma prática pela biblioteca. Como ele não é uma fonte oficial, conferi o último fechamento, de 30/10/2026, no Google Finance: o site relatou 167.921,80 às 16:56 e na B3, que mostrou 167.920,+
-diferença apenas de arredondamento."
+- **Por quê:** O Ibovespa não vem do Banco Central, e sim da B3, a bolsa brasileira, que calcula e divulga o índice. O Yahoo apenas republica esses dados, mas entrega o histórico de forma prática pela biblioteca. Como não é uma fonte oficial, conferi o último fechamento, de 30/10/2026, no Google Finance: o arquivo do pipeline traz 167.922,00, e o Google mostrou 167.921,80 às 16:56. A diferença é de 0,20 ponto em quase 168 mil, desprezível, e provavelmente vem do horário da consulta, já que o Google pode ter mostrado um valor anterior ao fechamento. Por isso considerei o dado do Yahoo confiável para este projeto.
 
 ### 8. Junção das séries diárias: manter todas as datas
 
@@ -113,7 +122,7 @@ diferença apenas de arredondamento."
 
 ### 13. Dashboard: Ibovespa em gráfico separado, em pontos
 
-- **O que decidi:** Opetei por deixar o gráfico do Ibovespa separado dos outros investimentos 
+- **O que decidi:** Optei por deixar o gráfico do Ibovespa separado das outras três séries, em pontos
 
 
 - **Por quê:** O Ibovespa não é um investimento, é um índice que mede o desempenho médio das ações mais negociadas da B3. Ele vem em pontos e não em reais, então colocá-lo no mesmo gráfico dos outros seria comparar coisas diferentes. Além disso, a renda variável depende de oferta e demanda, o que traz um risco diferente do CDI. Deixei separado para apresentar ao investidor uma referência nova, sem misturar com as outras três.
@@ -125,7 +134,20 @@ diferença apenas de arredondamento."
 - **O que decidi:** Encerrar CDI, dólar e IPCA na mesma data, 30 de setembro de 2026, tanto no gráfico principal quanto nos valores finais.
 
 
-**Por quê:** Eu queria uma comparação justa entre as três referências. Quando olhei o dashboard, cada série terminava em uma data diferente: o CDI em 29/10, o dólar em 30/10 e o IPCA em 30/09. Como o IPCA é mensal e o último mês fechado é setembro, usei essa como data comum, o último dia em que as três têm dado. Assim ninguém compara um mês de inflação a mais de um mês de CDI e dólar. O custo é perder outubro no gráfico, que ainda não tem IPCA.
+- **Por quê:** Eu queria uma comparação justa entre as três referências. Quando olhei o dashboard, cada série terminava em uma data diferente: o CDI em 29/10, o dólar em 30/10 e o IPCA em 30/09. Como o IPCA é mensal e o último mês fechado é setembro, usei essa como data comum, o último dia em que as três têm dado. Assim ninguém compara um mês de inflação a mais de um mês de CDI e dólar. O custo é perder outubro no gráfico, que ainda não tem IPCA publicado.
+
+
+### 15. Dashboard: Streamlit com Plotly
+
+
+- **O que decidi:** Decidi construir o dashboard com Streamlit e Plotly, em uma página web interativa aberta pelo navegador.
+
+
+- **Por quê:** O Streamlit reaproveita o pandas e a base que o pipeline gera, então o dashboard fica ligado ao pipeline em vez de ser um trabalho separado, e quando os dados são atualizados o dashboard lê os arquivos novos. O Plotly gera gráficos interativos: ao passar o mouse, aparecem os valores de cada dia. Ele também permite desenhar o IPCA em degraus, como uso no gráfico, o que deixa a página mais informativa para o usuário.
+
+
+
+
 
 
 ## Limitações
@@ -148,3 +170,8 @@ diferença apenas de arredondamento."
 
 - **Os fins de semana e feriados não são preenchidos.** Mantive só os dias úteis, como as fontes publicam.
 
+
+- **O período do dashboard é fixo no código.** O pipeline se atualiza sozinho, mas o dashboard termina em 30/09/2026 por definição; para incluir meses novos, é preciso mudar a data final no código.
+
+
+- **Os comandos são para Windows.** Usei `py` para rodar o Python. Em Mac ou Linux, o comando seria `python3`.
