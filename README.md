@@ -131,15 +131,20 @@ diferença apenas de arredondamento."
 ## Limitações
 
 
-Já extraí as quatro séries, CDI, IPCA, dólar PTAX e Ibovespa, e cada uma se atualiza sozinha com py src/atualizar_tudo.py. As séries diárias foram juntas numa base única pela data, e o IPCA ficou em tabela separada por ser mensal. Ainda não montei o dashboard.
+- **O dashboard mostra o passado, não prevê o futuro.** Ele mostra quanto R$ 1.000 teriam virado desde novembro de 2021, e o que rendeu antes não garante o que vai render depois.
 
-O Ibovespa vem do Yahoo Finance, pela biblioteca yfinance, que é não oficial. Ela não tem a garantia de uma fonte como o Banco Central e pode mudar, falhar ou ter um dia faltando sem aviso. A biblioteca também imprime avisos de depreciação do pandas, que não afetam o resultado, mas mostram que ela pode quebrar com versões futuras. Por isso conferi o último fechamento em outras duas fontes.
 
-A base diária tem vazios que são reais: o Ibovespa tem 8, nas vésperas de Natal e Ano Novo, quando a bolsa fecha e o Banco Central publica o dólar. O CDI tem 1 vazio em 30/10/2026, porque o Banco Central ainda não tinha publicado esse dia na data da extração. Deixei os vazios em vez de preencher, para não inventar valores.
+- **Período cortado em 30/09/2026.** Encerrei CDI, dólar e IPCA na mesma data para a comparação ser justa. Por isso outubro de 2026 ficou fora do dashboard, mesmo com CDI e dólar já tendo dados. O Ibovespa também usa esse corte.
 
-Se a API do Banco Central falhar, o pipeline para com erro, e a solução é rodar de novo depois.
 
-Tive algumas dificuldades pelo caminho, não sabia onde encontrar as taxas do CDI, precisei pesquisar como configurar o formato da data no Python e pedi ajuda à IA para entender como executar o código. No código do Ibovespa, o mais difícil foi lidar com o fuso horário das datas, que o Yahoo entrega e as outras séries não têm, e organizar a lógica do código inteiro. Como estou em um dos períodos iniciais do curso, sigo aprendendo no processo e conferindo o que a IA me sugere, de acordo com meus estudos.
+- **O Ibovespa vem de uma fonte não oficial.** Ele é obtido pelo Yahoo Finance, pela biblioteca yfinance, que não tem a garantia de uma fonte como o Banco Central e pode mudar, falhar ou ter um dia faltando sem aviso. Por isso conferi o último fechamento em outras fontes.
 
-Tive algumas dificuldades pelo caminho, não sabia onde encontrar as taxas do CDI, precisei pesquisar como configurar o formato da data no Python e pedi ajuda à IA para entender como executar o código. No código do Ibovespa, o mais difícil foi lidar com o fuso horário das datas, que o Yahoo entrega e as outras séries não têm, e organizar a lógica do código inteiro. Como estou em um dos períodos iniciais do curso, sigo aprendendo no processo e conferindo o que a IA me sugere, de acordo com meus estudos.
+
+- **A base diária tem vazios reais.** O Ibovespa tem 8, nas vésperas de Natal e Ano Novo, quando a bolsa fecha e o Banco Central publica o dólar. O CDI tem 1, em 30/10/2026, porque o dado ainda não tinha sido publicado. Deixei os vazios em vez de preencher, para não inventar valores.
+
+
+- **Se a API do Banco Central falhar, o pipeline para.** Escolhi parar em vez de seguir com dados faltando, e a solução é rodar de novo depois.
+
+
+- **Os fins de semana e feriados não são preenchidos.** Mantive só os dias úteis, como as fontes publicam.
 
