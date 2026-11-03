@@ -146,8 +146,14 @@ Este projeto reúne quatro indicadores do mercado financeiro brasileiro dos últ
 - **Por quê:** O Streamlit reaproveita o pandas e a base que o pipeline gera, então o dashboard fica ligado ao pipeline em vez de ser um trabalho separado, e quando os dados são atualizados o dashboard lê os arquivos novos. O Plotly gera gráficos interativos: ao passar o mouse, aparecem os valores de cada dia. Ele também permite desenhar o IPCA em degraus, como uso no gráfico, o que deixa a página mais informativa para o usuário.
 
 
+### 16. Dashboard: padrão brasileiro e leitura mais clara
 
 
+- **O que decidi:** Apresentar valores, porcentagens e datas no padrão brasileiro (R$ 1.803,82, +80,4% e 30/09/2026), e deixar os gráficos mais fáceis de ler e de interagir.
+
+
+
+- **Por quê:** o investidor brasileiro já está acostumado a ver os números nesse formato, então o dashboard fica mais familiar. Ao passar o mouse nos gráficos, aparecem os valores de cada série em cada data, e assim ele acompanha quanto cada referência rendeu ao longo do período, sem ver somente os R\$ 1.000 do começo e o valor do final. Também acrescentei uma linha de referência em R\$ 1.000, textos que explicam cada número e um rodapé com as fontes e o aviso de que o passado não garante o futuro. As cores seguem a identidade visual da Vêneto.
 
 
 ## Limitações
